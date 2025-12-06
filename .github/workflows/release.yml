@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Get version from pyproject.toml
+        id: get_version
+        run: |
+          python - << 'PY'
+          import pathlib, os
+          try:
+              import tomllib  # Python 3.11+
+          except ImportError:
+              import tomli as tomllib
+
+          data = tomllib.loads(pathlib.Path("pyproject.toml").read_text("utf-8"))
+          version = data["tool"]["poetry"]["version"]
+
+          # Выводим output для последующих шагов
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
+              f.write(f"version={version}\n")
+          PY
+
+      - name: Create ZIP archive
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          ZIP_NAME="casa-squire-agent-${VERSION}.zip"
+
+          echo "ZIP_NAME=${ZIP_NAME}" >> $GITHUB_ENV
+
+          zip -r "$ZIP_NAME" . \
+            -x ".venv/*" \
+               "__pycache__/*" \
+               "*.pyc" \
+               ".env" \
+               ".git/*" \
+               ".idea/*" \
+               ".vscode/*" \
+               ".pytest_cache/*" \
+               "logs/*" \
+               "*.log" \
+               "dist/*" \
+               "build/*" \
+               "*.egg-info/*" \
+               ".mypy_cache/*" \
+               ".ruff_cache/*" \
+               "node_modules/*" \
+               "__pypackages__/*" \
+               "*.sqlite3"
+
+      - name: Upload ZIP as artifact (optional, для истории)
+        uses: actions/upload-artifact@v4
+        with:
+          name: casa-squire-agent
+          path: ${{ env.ZIP_NAME }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "Casa Squire Agent ${{ steps.get_version.outputs.version }}"
+          draft: false
+          prerelease: false
+          files: ${{ env.ZIP_NAME }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
