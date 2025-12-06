@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Awaitable, Callable, Set
 
 from aiogram import BaseMiddleware
@@ -18,12 +19,15 @@ class OwnerMiddleware(BaseMiddleware):
         chat: Chat | None = data.get("event_chat")
 
         if not chat.type == "private":
+            logging.info("Chat is not private")
             return
 
         if user is None:
+            logging.info("User is None")
             return
 
         if user.id not in self.owner_ids:
+            logging.info(f"User {user.id} is not owner")
             return
 
         return await handler(event, data)
