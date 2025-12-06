@@ -18,23 +18,34 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Get version from pyproject.toml
+            - name: Get version from pyproject.toml
         id: get_version
         run: |
           python - << 'PY'
-          import pathlib, os
+          import pathlib, os, sys
           try:
               import tomllib  # Python 3.11+
           except ImportError:
               import tomli as tomllib
 
-          data = tomllib.loads(pathlib.Path("pyproject.toml").read_text("utf-8"))
-          version = data["tool"]["poetry"]["version"]
+          path = pathlib.Path("pyproject.toml")
+          if not path.exists():
+              print("pyproject.toml not found in repo root", file=sys.stderr)
+              sys.exit(1)
 
-          # Выводим output для последующих шагов
+          data = tomllib.loads(path.read_text("utf-8"))
+
+          project = data.get("project") or {}
+          version = project.get("version")
+
+          if not version:
+              print("Не нашёл 'version' в секции [project] pyproject.toml", file=sys.stderr)
+              sys.exit(1)
+
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as f:
               f.write(f"version={version}\n")
           PY
+
 
       - name: Create ZIP archive
         run: |
