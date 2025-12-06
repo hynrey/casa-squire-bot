@@ -126,7 +126,7 @@ echo Create a new bot or use an existing one and copy its token.
 echo.
 start https://t.me/BotFather
 echo.
-set /p BOT_TOKEN=Enter BOT_TOKEN (paste from BotFather): 
+set /p BOT_TOKEN=Enter BOT_TOKEN (paste from BotFather):
 if "%BOT_TOKEN%"=="" (
     echo [ERROR] BOT_TOKEN cannot be empty. Try again.
     goto ASK_TOKEN
@@ -139,7 +139,7 @@ echo To get your Telegram ID (OWNER_ID), Telegram bot @userinfobot will be opene
 echo Send any message to it and copy your numeric ID.
 start https://t.me/userinfobot
 echo.
-set /p OWNER_ID=Enter your OWNER_ID (numbers only): 
+set /p OWNER_ID=Enter your OWNER_ID (numbers only):
 if "%OWNER_ID%"=="" (
     echo [ERROR] OWNER_ID cannot be empty. Try again.
     goto ASK_OWNER
@@ -205,4 +205,3 @@ echo Press any key to close this installer window...
 pause >nul
 endlocal
 exit /b
-

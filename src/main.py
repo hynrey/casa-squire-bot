@@ -4,10 +4,10 @@ from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
-from src.settings.logs_settings import LogManager
-from src.settings import telegram_settings
 from src.bot.dispatcher import register_callbacks
 from src.bot.middleware.owner import OwnerMiddleware
+from src.settings import telegram_settings
+from src.settings.logs_settings import LogManager
 
 bot = Bot(
     token=telegram_settings.token,

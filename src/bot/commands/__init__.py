@@ -1,5 +1,5 @@
 from aiogram import Dispatcher
-from aiogram.filters import CommandObject, Command
+from aiogram.filters import Command, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
@@ -17,5 +17,7 @@ def command_handler(command_instance):
 def register_commands(dp: Dispatcher) -> None:
     shutdown_conversation = ShutdownConversation()
 
-    dp.message.register(command_handler(ShutdownCommand(conversation=shutdown_conversation)), Command("shutdown"))
+    dp.message.register(
+        command_handler(ShutdownCommand(conversation=shutdown_conversation)), Command("shutdown")
+    )
     dp.include_router(shutdown_conversation.router)

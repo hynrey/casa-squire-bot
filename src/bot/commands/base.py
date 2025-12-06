@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 from src.bot.conversation.base import BaseConversation
 

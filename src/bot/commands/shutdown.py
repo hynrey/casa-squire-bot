@@ -1,6 +1,6 @@
-from aiogram.types import Message
 from aiogram.filters import CommandObject
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 from src.bot.commands.base import BaseCommand
 

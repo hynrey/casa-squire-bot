@@ -3,17 +3,16 @@ from enum import Enum
 
 from aiogram import F
 from aiogram.fsm.context import FSMContext
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import (
-    Message,
     CallbackQuery,
     InlineKeyboardMarkup,
+    Message,
 )
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from src.bot.conversation.base import BaseConversation
 from src.bot.states.shutdown import ShutdownState
-
-from src.utils.shutdown import schedule_shutdown, abort_shutdown
+from src.utils.shutdown import abort_shutdown, schedule_shutdown
 
 
 class ShutdownAction(Enum):
@@ -60,9 +59,11 @@ class ShutdownConversation(BaseConversation):
     def _register_handlers(self):
         """Register handlers for the link conversation."""
         self.router.callback_query.register(
-            self.ask_time, ShutdownState.ask_time, F.data.startswith("shutdown:"))
+            self.ask_time, ShutdownState.ask_time, F.data.startswith("shutdown:")
+        )
         self.router.callback_query.register(
-            self.ask_now_confirm, ShutdownState.ask_now_confirm, F.data.startswith("now_confirm:"))
+            self.ask_now_confirm, ShutdownState.ask_now_confirm, F.data.startswith("now_confirm:")
+        )
 
     def __build_time_keyboard(self, has_pending: bool) -> InlineKeyboardMarkup:
         """
@@ -71,11 +72,21 @@ class ShutdownConversation(BaseConversation):
         """
         builder = InlineKeyboardBuilder()
 
-        builder.button(text="⚡ Сейчас",       callback_data=f"shutdown:{ShutdownAction.NOW.callback_value}")
-        builder.button(text="⏰ Через 1 час",  callback_data=f"shutdown:{ShutdownAction.H1.callback_value}")
-        builder.button(text="⏰ Через 2 часа", callback_data=f"shutdown:{ShutdownAction.H2.callback_value}")
-        builder.button(text="⏰ Через 3 часа", callback_data=f"shutdown:{ShutdownAction.H3.callback_value}")
-        builder.button(text="⏰ Через 4 часа", callback_data=f"shutdown:{ShutdownAction.H4.callback_value}")
+        builder.button(
+            text="⚡ Сейчас", callback_data=f"shutdown:{ShutdownAction.NOW.callback_value}"
+        )
+        builder.button(
+            text="⏰ Через 1 час", callback_data=f"shutdown:{ShutdownAction.H1.callback_value}"
+        )
+        builder.button(
+            text="⏰ Через 2 часа", callback_data=f"shutdown:{ShutdownAction.H2.callback_value}"
+        )
+        builder.button(
+            text="⏰ Через 3 часа", callback_data=f"shutdown:{ShutdownAction.H3.callback_value}"
+        )
+        builder.button(
+            text="⏰ Через 4 часа", callback_data=f"shutdown:{ShutdownAction.H4.callback_value}"
+        )
 
         builder.adjust(1, 2, 2)
 
@@ -117,21 +128,21 @@ class ShutdownConversation(BaseConversation):
         await state.update_data(pending=False, delay_seconds=None)
         await state.clear()
 
-    async def _notify_before_shutdown(self, callback: CallbackQuery, state: FSMContext, seconds: int):
+    async def _notify_before_shutdown(
+        self, callback: CallbackQuery, state: FSMContext, seconds: int
+    ):
         if seconds <= 0:
             await self._reset_state(state)
             return
         if seconds > 300:
             await asyncio.sleep(seconds - 300)
             await callback.bot.send_message(
-                chat_id=callback.from_user.id,
-                text="⚠️ Компьютер выключится через 5 минут!"
+                chat_id=callback.from_user.id, text="⚠️ Компьютер выключится через 5 минут!"
             )
 
         await asyncio.sleep(min(300, seconds))
         await callback.bot.send_message(
-            chat_id=callback.from_user.id,
-            text="💤 Компьютер выключается прямо сейчас!"
+            chat_id=callback.from_user.id, text="💤 Компьютер выключается прямо сейчас!"
         )
         await self._reset_state(state)
 
@@ -153,13 +164,19 @@ class ShutdownConversation(BaseConversation):
         if action is ShutdownAction.ABORT:
             abort_shutdown()
             await self._reset_state(state)
-            await callback.bot.send_message(chat_id=chat_id, text="❌ Запланированное выключение отменено.")
+            await callback.bot.send_message(
+                chat_id=chat_id, text="❌ Запланированное выключение отменено."
+            )
             return
 
         if action is ShutdownAction.NOW:
             keyboard = self.__build_confirm_keyboard()
             await state.set_state(ShutdownState.ask_now_confirm)
-            await callback.bot.send_message(chat_id=chat_id, text="⚠️ Ты точно хочешь выключить компьютер прямо сейчас?", reply_markup=keyboard)
+            await callback.bot.send_message(
+                chat_id=chat_id,
+                text="⚠️ Ты точно хочешь выключить компьютер прямо сейчас?",
+                reply_markup=keyboard,
+            )
             return
 
         seconds: int = action.value
@@ -196,7 +213,9 @@ class ShutdownConversation(BaseConversation):
             await self._reset_state(state)
             return
 
-        await callback.bot.send_message(chat_id=chat_id, text="👌 Хорошо не буду выключать компьютер")
+        await callback.bot.send_message(
+            chat_id=chat_id, text="👌 Хорошо не буду выключать компьютер"
+        )
         await self._reset_state(state)
 
     async def finish(self, state: FSMContext):

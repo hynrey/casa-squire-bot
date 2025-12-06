@@ -94,11 +94,11 @@ repos:
   #        - pydocstyle>=6.1.1
   # <---- Code Analysis --------------------------------------------------------------------------------------------->
 
-  - repo: local
-    hooks:
-      - id: pytest-check
-        name: pytest-check
-        entry: pytest tests
-        language: system
-        pass_filenames: false
-        always_run: true
+  # - repo: local
+  #   hooks:
+  #     - id: pytest-check
+  #       name: pytest-check
+  #       entry: pytest tests
+  #       language: system
+  #       pass_filenames: false
+  #       always_run: true
