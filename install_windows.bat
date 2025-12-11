@@ -175,7 +175,8 @@ if %ERRORLEVEL%==0 (
 )
 
 REM Create new task
-schtasks /Create /SC ONLOGON /TN "%TASK_NAME%" /TR "\"%RUN_PATH%\"" /F >nul 2>&1
+@REM schtasks /Create /SC ONLOGON /TN "%TASK_NAME%" /TR "\"%RUN_PATH%\"" /F >nul 2>&1
+schtasks /Create /SC ONLOGON /TN "%TASK_NAME%" /TR "\"%RUN_PATH%\"" /RL LIMITED /F >nul 2>&1
 
 if errorlevel 1 (
     echo [WARN] Failed to create autorun task.
@@ -184,24 +185,9 @@ if errorlevel 1 (
     echo   - run the bot manually using run.bat.
 ) else (
     echo [OK] Autorun has been configured successfully.
-    echo Bot will start automatically on next user logon.
-)
-
-echo [INFO] Installation finished.
-echo [INFO] Starting bot now...
-
-if exist "%RUN_PATH%" (
-    start "CasaSquire Bot" cmd /k "%RUN_PATH%"
-    echo [OK] Bot has been started using:
-    echo      %RUN_PATH%
-) else (
-    echo [WARN] Could not find run.bat at:
-    echo      %RUN_PATH%
-    echo Please start the bot manually.
+    echo [INFO] Starting bot via Task Scheduler...
+    schtasks /Run /TN "%TASK_NAME%"
 )
 
 :END
-echo Press any key to close this installer window...
-pause >nul
-endlocal
-exit /b
+exit

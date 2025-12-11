@@ -1,4 +1,2 @@
 @echo off
-cd /d %~dp0
-call venv\Scripts\activate
-python bot.py
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0run_bot.ps1"
