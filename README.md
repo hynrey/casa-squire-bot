@@ -1,39 +1,143 @@
-# Casa Squire Bot
 
-Телеграм-бот, который по команде владельца планирует выключение Windows-компьютера. В ответ на `/shutdown` бот показывает кнопки: выключить сразу, через 1–4 часа или отменить уже запланированное выключение.
+# **Casa Squire Bot**
+*A personal Telegram assistant for remotely scheduling Windows shutdowns and startups via WOL.*
 
-## Требования
-- Windows 10/11 или WSL с доступом к `cmd.exe` и команде `shutdown`.
-- Python 3.11+ в `PATH`.
-- Токен бота от BotFather и Telegram ID владельца (переменные `BOT_TOKEN`, `OWNER_IDS` в `.env`).
+---
 
-## Файлы
-- `install_windows.bat` — создаёт venv, ставит зависимости, спрашивает токен/ID, пишет `.env`, настраивает задачу автозапуска в Планировщике задач (имя `CasaSquireBot`, запускает `run.bat`). Если файл переименовали, поправьте путь в скрипте.
-- `run_windows.bat` — активирует venv и запускает `python bot.py`.
-- `bot.py` — входная точка бота (Aiogram 3).
-- `pyproject.toml` / `poetry.lock` — список зависимостей (экспортируйте `requirements.txt`, если его нет: `poetry export -f requirements.txt -o requirements.txt`).
+## 🏷️ **Badges**
 
-## Установка на Windows
-1) Убедитесь, что установлен Python 3.11+ и доступен в `PATH`.  
-2) Запустите `install_windows.bat` (при проблемах с задачей автозапуска — «Запуск от имени администратора»).  
-   - Скрипт создаст `venv`, обновит `pip`, установит зависимости из `requirements.txt`, откроет BotFather и `@userinfobot`, запросит `BOT_TOKEN` и `OWNER_ID`, запишет `.env`.  
-   - Настроит автозапуск через Планировщик задач: при входе в систему будет выполняться `run.bat`, который активирует venv и стартует бота.
+![Python](https://img.shields.io/badge/Python-3.11+-0c0c0c?style=for-the-badge&logo=python&logoColor=white)
+![Aiogram](https://img.shields.io/badge/Aiogram-3.x-0c0c0c?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Active-0c0c0c?style=for-the-badge&color=4caf50)
+![License](https://img.shields.io/badge/License-MIT-0c0c0c?style=for-the-badge)
 
-## Запуск вручную
-- Из корня проекта: `run_windows.bat`  
-  или вручную:  
-  ```bash
-  .\\venv\\Scripts\\activate
-  python bot.py
-  ```
+---
 
-## Запуск под WSL
-- Скрипты `.bat` можно вызвать через `cmd.exe /C`, но Планировщик задач из WSL не настроится автоматически.  
-- Убедитесь, что `cmd.exe` доступен (обычно `/mnt/c/Windows/System32/cmd.exe`) и текущий пользователь Windows имеет права выполнять `shutdown`.  
-- Создайте `.env` вручную (`BOT_TOKEN`, `OWNER_IDS=123456789`), соберите зависимости командой `pip install -r requirements.txt` (или `pip install aiogram pydantic pydantic-settings` при отсутствии файла), затем запустите `python bot.py` из активированного venv.
+## 📌 **Overview**
 
-## Ограничения и особенности
-- Бот работает только в приватных чатах и только для `OWNER_IDS`. Остальные пользователи его не увидят (middleware отбрасывает события).  
-- Выключение/отмена выполняются через `cmd.exe /c shutdown`, поэтому бот не пригоден для чистого Linux/Mac.  
-- Для автозапуска нужна задача Планировщика; если она не создалась, удалите/создайте её вручную с запуском `run_windows.bat` из корня проекта.  
-- Команда отмены доступна только пока таймер выключения активен; после завершения ожидания отменить нельзя.
+Casa Squire Bot is a private-use Telegram bot that allows the owner to remotely schedule a Windows shutdown.
+
+When sending `/shutdown`, the bot displays:
+
+- Shutdown **now**
+- Shutdown in **1–4 hours**
+- **Cancel** scheduled shutdown
+
+Only owner IDs are allowed to access the bot.  
+All other users are ignored via middleware.
+
+---
+
+## 🧩 **Requirements**
+
+- Windows **10/11**, or WSL with access to `cmd.exe`
+- Python **3.11+** in PATH
+- Telegram bot token (`BOT_TOKEN`)
+- Owner user ID(s) (`OWNER_IDS` in `.env`)
+
+---
+
+## 📁 **Project Structure**
+
+| File | Description |
+|------|-------------|
+| `install_windows.bat` | Creates venv, installs dependencies, asks for token & owner ID, writes `.env`, and registers Task Scheduler autostart. |
+| `run_windows.bat` | Activates the venv and launches `python bot.py`. |
+| `bot.py` | Main entry point (Aiogram 3). |
+| `pyproject.toml` / `poetry.lock` | Dependency specification (Poetry). |
+| `requirements.txt` | Exported dependencies (`poetry export`). |
+
+---
+
+## 🛠 **Installation (Windows)**
+
+1. Ensure Python **3.11+** is installed.
+2. Run:
+
+```
+install_windows.bat
+```
+
+The script will:
+
+- Create a virtual environment  
+- Install dependencies  
+- Ask for `BOT_TOKEN` and `OWNER_IDS`  
+- Write `.env`  
+- Create Task Scheduler autostart job (`CasaSquireBot`) that runs `run_windows.bat`
+
+> If autostart fails, run the installer **as Administrator**.
+
+---
+
+## 🚀 **Manual Launch**
+
+```
+run_windows.bat
+```
+
+Or:
+
+```powershell
+.\venv\Scripts\activate
+python bot.py
+```
+
+---
+
+## 🐧 **Running Under WSL**
+
+WSL can execute `.bat` using:
+
+```
+cmd.exe /C install_windows.bat
+```
+
+But Task Scheduler cannot be configured from Linux.
+
+WSL Instructions:
+
+```bash
+pip install -r requirements.txt
+echo "BOT_TOKEN=xxx" > .env
+echo "OWNER_IDS=123456789" >> .env
+python bot.py
+```
+
+Ensure:
+
+- `cmd.exe` is accessible (usually `/mnt/c/Windows/System32/cmd.exe`)
+- Your user has permission to run Windows shutdown commands
+
+---
+
+## ⚠️ **Limitations**
+
+- Works **only in private chats**
+- Only for users listed in `OWNER_IDS`
+- Shutdown uses:
+
+```
+cmd.exe /c shutdown
+```
+
+Therefore, the bot is **not compatible with pure Linux or macOS**  
+(WSL works only partially).
+
+- Cancellation is only possible while a shutdown timer is active.
+
+---
+
+## 🗺️ **Roadmap**
+
+- [ ] Desktop app launcher (PyQt / Tkinter)
+- [ ] Windows installer (.exe)
+- [ ] Notification center for shutdown timers
+- [ ] Localization (i18n)
+- [ ] Web dashboard for controlling bot
+
+---
+
+## 📜 **License**
+
+MIT License — feel free to use and modify.
