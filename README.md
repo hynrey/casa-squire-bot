@@ -132,9 +132,7 @@ Therefore, the bot is **not compatible with pure Linux or macOS**
 
 - [ ] Desktop app launcher (PyQt / Tkinter)
 - [ ] Windows installer (.exe)
-- [ ] Notification center for shutdown timers
 - [ ] Localization (i18n)
-- [ ] Web dashboard for controlling bot
 
 ---
 
