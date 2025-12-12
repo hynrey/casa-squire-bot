@@ -9,7 +9,7 @@
 ![Python](https://img.shields.io/badge/Python-3.11+-0c0c0c?style=for-the-badge&logo=python&logoColor=white)
 ![Aiogram](https://img.shields.io/badge/Aiogram-3.x-0c0c0c?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-0c0c0c?style=for-the-badge&color=4caf50)
-![License](https://img.shields.io/badge/License-MIT-0c0c0c?style=for-the-badge)
+![License](https://img.shields.io/badge/License-GPL3.0-0c0c0c?style=for-the-badge)
 
 ---
 
@@ -138,4 +138,4 @@ Therefore, the bot is **not compatible with pure Linux or macOS**
 
 ## 📜 **License**
 
-MIT License — feel free to use and modify.
+GPL3.0
