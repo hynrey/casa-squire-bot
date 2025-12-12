@@ -1,0 +1,6 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Questions & general discussion
+    url: https://github.com/<your-user>/<your-repo>/discussions
+    about: "Use GitHub Discussions for general questions and ideas."
