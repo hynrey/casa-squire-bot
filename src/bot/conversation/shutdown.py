@@ -16,7 +16,7 @@ from src.utils.shutdown import abort_shutdown, schedule_shutdown
 
 
 class ShutdownAction(Enum):
-    NOW = 0
+    NOW = 1
     H1 = 3600
     H2 = 7200
     H3 = 10800
@@ -107,7 +107,7 @@ class ShutdownConversation(BaseConversation):
 
     @staticmethod
     def __format_delay_text(seconds: int) -> str:
-        if seconds == 0:
+        if seconds == 1 or seconds == 0:
             return "💤 Компьютер начнёт выключаться прямо сейчас!"
         if seconds < 60:
             return f"⏱️ Компьютер выключится через {seconds} секунд"
@@ -206,11 +206,11 @@ class ShutdownConversation(BaseConversation):
         await callback.message.delete()
 
         if action == ShutdownConfirmAction.YES:
-            seconds = 0
-            delay_text = self.__format_delay_text(seconds)
+            seconds = 1
+            delay_text = self.__format_delay_text(seconds=seconds)
             await callback.bot.send_message(chat_id=chat_id, text=delay_text)
-            schedule_shutdown(seconds)
-            await self._reset_state(state)
+            schedule_shutdown(seconds=seconds)
+            await self._reset_state(state=state)
             return
 
         await callback.bot.send_message(
