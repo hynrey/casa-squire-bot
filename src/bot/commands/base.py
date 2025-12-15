@@ -5,6 +5,12 @@ from aiogram.types import Message
 
 from src.bot.conversation.base import BaseConversation
 
+AVAILABLE_COMMANDS = [
+    "/start",
+    "/shutdown",
+    "/help",
+]
+
 
 class BaseCommand(ABC):
 

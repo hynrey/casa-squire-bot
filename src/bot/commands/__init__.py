@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 
 from src.bot.commands.shutdown import ShutdownCommand
+from src.bot.commands.start import StartCommand
 from src.bot.conversation.shutdown import ShutdownConversation
 
 
@@ -15,6 +16,8 @@ def command_handler(command_instance):
 
 
 def register_commands(dp: Dispatcher) -> None:
+    dp.message.register(command_handler(StartCommand()), Command("start"))
+
     shutdown_conversation = ShutdownConversation()
 
     dp.message.register(
